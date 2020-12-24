@@ -14,7 +14,10 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"runtime"
+	"strings"
 )
 
 type Rc4 struct {
@@ -36,10 +39,13 @@ func init() {
 }
 
 func main() {
-	f, err := os.Open(fileName)
+	f, err := os.Open(getProcessDir() + fileName)
 	if err != nil {
-		fmt.Println("打开配置文件失败")
-		return
+		f, err = os.Open(fileName)
+		if err != nil {
+			fmt.Println("打开配置文件失败")
+			return
+		}
 	}
 	var jsondata []byte
 	var buf = make([]byte, 1)
@@ -83,7 +89,7 @@ func main() {
 	if err != nil {
 		fmt.Println("开始tcp侦听出错", err)
 	}
-
+	fmt.Println("代理客户端已启动，服务端口是:", localPort)
 	for {
 		client, err := tcplisten.AcceptTCP()
 		if err != nil {
@@ -145,4 +151,16 @@ func (c *Rc4) encryptCopy(dst *net.TCPConn, src *net.TCPConn) {
 		dst.Write(buf[:n])
 	}
 
+}
+func getProcessDir() string {
+	file, _ := exec.LookPath(os.Args[0])
+
+	path, _ := filepath.Abs(file)
+
+	if runtime.GOOS == "windows" {
+		path = strings.Replace(path, "\\", "/", -1)
+	}
+
+	i := strings.LastIndex(path, "/")
+	return string(path[0 : i+1])
 }
