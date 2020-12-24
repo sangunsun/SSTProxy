@@ -13,6 +13,8 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strings"
 )
@@ -34,10 +36,13 @@ func init() {
 }
 
 func main() {
-	f, err := os.Open(fileName)
+	f, err := os.Open(getProcessDir() + fileName)
 	if err != nil {
-		fmt.Println("打开配置文件失败")
-		return
+		f, err = os.Open(fileName)
+		if err != nil {
+			fmt.Println("打开配置文件失败")
+			return
+		}
 	}
 	var jsondata []byte
 	var buf = make([]byte, 1)
@@ -194,3 +199,15 @@ func deCodereadSplitString(r *net.TCPConn, coder *Rc4, delim []byte) []byte {
       }
 
   }
+func getProcessDir() string {
+	file, _ := exec.LookPath(os.Args[0])
+
+	path, _ := filepath.Abs(file)
+
+	if runtime.GOOS == "windows" {
+		path = strings.Replace(path, "\\", "/", -1)
+	}
+
+	i := strings.LastIndex(path, "/")
+	return string(path[0 : i+1])
+}
