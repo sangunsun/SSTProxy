@@ -1,7 +1,8 @@
 # SSTProxy
 a simple proxy by encryption by rc4
 
-#### golang写的简单正向https代理服务器
+#### golang写的简单正向http代理服务器
++ 采用tcp隧道方式，从tcp层进行数据加密转发，支持http和https
 
 + 为分客户端和服务端，客户端和服务端采用RC4加密  
 + 本软件的客户端程序直接对tcp数据进行加密转发给服务端，服务端对tcp数据进行http报头解析，然后再转发给目标服务器主机
