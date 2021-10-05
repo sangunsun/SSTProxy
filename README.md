@@ -1,5 +1,5 @@
 # SSTProxy
-a simple http proxy by encryption with rc4
+A simple http proxy encrypted with RC4
 
 一个简单的加密http代理,采用rc4加密传输，使用了有一年左右，还比较稳定，放github上，有空继续完善附加功能。
 
